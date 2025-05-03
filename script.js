@@ -1,6 +1,7 @@
 const gameContainer = document.getElementById('game-container');
 const timerEl = document.getElementById('timer');
 const killsEl = document.getElementById('kills');
+const levelEl = document.getElementById('level'); // NEW
 const muteBtn = document.getElementById('mute-btn');
 const offlineBanner = document.getElementById('offline');
 const startBtn = document.getElementById('start-btn');
@@ -9,6 +10,7 @@ const smashSound = document.getElementById('smash-sound');
 
 let time = 0;
 let kills = 0;
+let level = 1; // NEW
 let spawnInterval = 2000;
 let gameInterval;
 
@@ -62,8 +64,11 @@ function startGame() {
     time++;
     timerEl.textContent = time;
 
+    // Every 10 seconds, increase difficulty
     if (time % 10 === 0 && spawnInterval > 300) {
-      spawnInterval -= 200;
+      level++;
+      levelEl.textContent = level;
+      spawnInterval -= 150; // Speed up the game
       clearInterval(gameInterval);
       gameInterval = setInterval(spawnCockroach, spawnInterval);
     }
@@ -86,21 +91,17 @@ function checkConnection() {
 
 window.addEventListener('online', checkConnection);
 window.addEventListener('offline', checkConnection);
-
 checkConnection();
 
 // Handle Start button click
 startBtn.addEventListener('click', () => {
-  // Hide the landing page and show the game UI
   document.getElementById('landing-page').style.display = 'none';
   document.getElementById('ui').style.display = 'block';
   document.getElementById('game-container').style.display = 'block';
 
-  // Play background music
   bgMusic.play().catch((error) => {
     console.log('Autoplay blocked, trying manual play');
   });
 
-  // Start the game
   startGame();
 });
